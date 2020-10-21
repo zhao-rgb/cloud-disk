@@ -4,18 +4,33 @@
 		<nav-bar>
 			<text slot="left" class="font-md ml-3">首页</text>
 			<template slot="right">
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-icon rounded-circle mr-3"><text class="iconfont icon-zengjia"></text></view>
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-icon rounded-circle mr-3"><text class="iconfont icon-gengduo"></text></view>
+				<view
+					style="width: 60rpx; height: 60rpx;"
+					class="flex align-center justify-center bg-icon rounded-circle mr-3"
+				>
+					<text class="iconfont icon-zengjia"></text>
+				</view>
+				<view
+					style="width: 60rpx; height: 60rpx;"
+					class="flex align-center justify-center bg-icon rounded-circle mr-3"
+				>
+					<text class="iconfont icon-gengduo"></text>
+				</view>
 			</template>
 		</nav-bar>
-		<view class="bg-info" style="height: 1000px;">123</view>
+		<view class="bg-info" style="height: 1000px;">
+			<!-- 搜索框，设置圆角 -->
+			<uni-search-bar :radius="100"></uni-search-bar>
+		</view>
 	</view>
 </template>
 
 <script>
-import navBar from '@/components/common/nav-bar.vue';
+import uniSearchBar from '@/components/uni-ui/uni-search-bar/uni-search-bar.vue'
+import navBar from '@/components/common/nav-bar.vue'
 export default {
 	components: {
+		uniSearchBar,
 		navBar
 	},
 	data() {
