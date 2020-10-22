@@ -385,7 +385,74 @@ var render = function() {
         : _vm._e(),
       _c("f-dialog", { ref: "dialog", attrs: { _i: 21 } }, [
         _vm._v("是否删除选中的文件？")
-      ])
+      ]),
+      _c(
+        "f-dialog",
+        { ref: "rename", attrs: { _i: 22 } },
+        [
+          _c("v-uni-input", {
+            staticClass: _vm._$g(23, "sc"),
+            staticStyle: { height: "95rpx" },
+            attrs: { type: "text", placeholder: "重命名", _i: 23 },
+            model: {
+              value: _vm._$g(23, "v-model"),
+              callback: function($$v) {
+                _vm.$handleVModelEvent(23, $$v)
+              },
+              expression: "renameValue"
+            }
+          })
+        ],
+        1
+      ),
+      _c(
+        "uni-popup",
+        { ref: "add", attrs: { _i: 24 } },
+        [
+          _c(
+            "v-uni-view",
+            {
+              staticClass: _vm._$g(25, "sc"),
+              staticStyle: { height: "200rpx" },
+              attrs: { _i: 25 }
+            },
+            _vm._l(_vm._$g(26, "f"), function(item, index, $22, $32) {
+              return _c(
+                "v-uni-view",
+                {
+                  key: item,
+                  staticClass: _vm._$g("26-" + $32, "sc"),
+                  attrs: { "hover-class": "bg-light", _i: "26-" + $32 },
+                  on: {
+                    click: function($event) {
+                      return _vm.$handleViewEvent($event)
+                    }
+                  }
+                },
+                [
+                  _c("v-uni-text", {
+                    staticClass: _vm._$g("27-" + $32, "sc"),
+                    class: _vm._$g("27-" + $32, "c"),
+                    staticStyle: { width: "110rpx", height: "110rpx" },
+                    attrs: { _i: "27-" + $32 }
+                  }),
+                  _c(
+                    "v-uni-text",
+                    {
+                      staticClass: _vm._$g("28-" + $32, "sc"),
+                      attrs: { _i: "28-" + $32 }
+                    },
+                    [_vm._v(_vm._$g("28-" + $32, "t0-0"))]
+                  )
+                ],
+                1
+              )
+            }),
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )
@@ -424,7 +491,8 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 var _uniSearchBar = _interopRequireDefault(__webpack_require__(/*! @/components/uni-ui/uni-search-bar/uni-search-bar.vue */ 7));
 var _navBar = _interopRequireDefault(__webpack_require__(/*! @/components/common/nav-bar.vue */ 27));
 var _fList = _interopRequireDefault(__webpack_require__(/*! @/components/common/f-list.vue */ 40));
-var _fDialog = _interopRequireDefault(__webpack_require__(/*! @/components/common/f-dialog.vue */ 60));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
+var _fDialog = _interopRequireDefault(__webpack_require__(/*! @/components/common/f-dialog.vue */ 60));
+var _uniPopup = _interopRequireDefault(__webpack_require__(/*! @/components/uni-ui/uni-popup/uni-popup.vue */ 65));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
 {
 
   data: function data() {
@@ -436,7 +504,8 @@ var _fDialog = _interopRequireDefault(__webpack_require__(/*! @/components/commo
     'uniSearchBar': _uniSearchBar.default,
     'navBar': _navBar.default,
     'fList': _fList.default,
-    'fDialog': _fDialog.default } };exports.default = _default;
+    'fDialog': _fDialog.default,
+    'uniPopup': _uniPopup.default } };exports.default = _default;
 
 /***/ }),
 /* 7 */
