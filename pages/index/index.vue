@@ -41,12 +41,16 @@
 				       style="line-height: 1.5;"
 					   v-for="(item,index) in actions"
 					   :key="index"
-					   hover-class="bg-hover-primary">
+					   hover-class="bg-hover-primary"
+					   @click="handleBottomEvent(item)">
 					   <text class="iconfont" :class="item.icon"></text>
 					   {{item.name}}
 					   </view>
 			 </view>
 		</view>
+		
+		<!-- 是否要删除 -->
+		<f-dialog ref="dialog">是否删除选中的文件？</f-dialog>
 	</view>
 </template>
 
@@ -54,11 +58,13 @@
 	import uniSearchBar from '@/components/uni-ui/uni-search-bar/uni-search-bar.vue'
 	import navBar from '@/components/common/nav-bar.vue'
 	import fList from '@/components/common/f-list.vue'
+	import fDialog from '@/components/common/f-dialog.vue'
 	export default {
 		components: {
 			uniSearchBar,
 			navBar,
-			fList
+			fList,
+			fDialog
 		},
 		data() {
 			return {
@@ -107,6 +113,21 @@
 					item.checked = checked;
 				});
 			},
+			//处理底部操作条事件，这里仅对"删除"做了处理
+			handleBottomEvent(item) {
+				switch(item.name) {
+					case '删除':
+					   this.$refs.dialog.open(close => {
+						   close();
+						   // 在这儿可以写点击删除需要做的回调事件，这里先在控制台模拟，实际需要把checkList移除掉
+						   console.log('删除文件');
+						   console.log(this.checkList);
+					   });
+					   break;
+					default:
+					   break;
+				}
+			}
 		},
 		computed: {
 			//选中列表
