@@ -2,20 +2,31 @@
 	<view>
 		<!-- 自定义导航栏 -->
 		<nav-bar>
-			<text slot="left" class="font-md ml-3">首页</text>
-			<template slot="right">
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-icon rounded-circle mr-3">
-					<text class="iconfont icon-zengjia"></text>
-				</view>
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-icon rounded-circle mr-3">
-					<text class="iconfont icon-gengduo"></text>
-				</view>
+			<template v-if="checkCount == 0">
+				<text slot="left" class="font-md ml-3">首页</text>
+				<template slot="right">
+					<view style="width: 60rpx; height: 60rpx;" 
+					class="flex align-center justify-center bg-icon rounded-circle mr-3">
+						<text class="iconfont icon-zengjia"></text>
+					</view>
+					<view style="width: 60rpx; height: 60rpx;" 
+					class="flex align-center justify-center bg-icon rounded-circle mr-3">
+						<text class="iconfont icon-gengduo"></text>
+					</view>
+				</template>
 			</template>
+			
+			<template v-else>
+				<view slot="left" class="font-md ml-3 text-primary">取消</view>
+				<view class="font-md font-weight-bold">已选中{{checkCount}}个</view>
+				<view slot="right" class="font-md ml-3 text-primary">全选</view>
+			</template>
+
 		</nav-bar>
-		<view class="bg-info" style="height: 1000px;">
+		<view style="height: 1000px;">
 			<!-- 搜索框，设置圆角 -->
 			<uni-search-bar :radius="100"></uni-search-bar>
-			<block v-for="(item, index) in list" :key="index"><f-list :item="item" :index="index"></f-list></block>
+			<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @select="select"></f-list>
 		</view>
 	</view>
 </template>
@@ -66,7 +77,22 @@
 			};
 		},
 		onLoad() {},
-		methods: {}
+		methods: {
+			select(e) {
+				//接收到子组件传递过来的索引选中状态，将对应的list中的数据更新
+				this.list[e.index].checked = e.value
+			}
+		},
+		computed: {
+			//选中列表
+			checkList() {
+				return this.list.filter(item => item.checked);
+			},
+			//选中数量
+			checkCount() {
+				return this.checkList.length;
+			}
+		}
 	};
 </script>
 
