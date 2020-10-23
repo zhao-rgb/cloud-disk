@@ -147,7 +147,8 @@ export default {
 				{
 					type: 'video',
 					name: 'uniapp实战教程.mp4',
-					create_time: '2020-10-21 08:00',
+					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/disk/%E7%90%86%E6%83%B3%E4%B8%89%E6%97%AC.mp4',
+					// create_time: '2020-10-21 08:00',
 					checked: false
 				},
 				{
@@ -200,6 +201,11 @@ export default {
 					current: item.data,
 					urls: images.map(item=>item.data)
 				})
+				   break;
+				case 'video':
+				uni.navigateTo({
+					url: '../video/video?url='+item.data + '&title='+item.name,
+				});
 				   break;
 				default:
 				   break;
