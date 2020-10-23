@@ -163,10 +163,19 @@ export default {
 				},
 				{
 					type: 'image',
+					name: '撒野.jpg',
+					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/E0867EEDD11833E76C12DAD37F603911.jpg',
+					create_time: '2020-10-21 08:00',
+					// checked: false,
+					download: 100
+				},
+				{
+					type: 'image',
 					name: '风景.jpg',
 					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/E0867EEDD11833E76C12DAD37F603911.jpg',
-					// create_time: '2020-10-21 08:00',
-					checked: false
+					create_time: '2020-10-21 08:00',
+					// checked: false,
+					download: 50
 				},
 				{
 					type: 'video',

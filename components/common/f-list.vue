@@ -1,25 +1,37 @@
 <template>
-	<view class="p-3 flex align-center border-bottom border-light-secondary" @click="$emit('click')">
-		<text class="iconfont" :class="iconClass" style="font-size: 60rpx;"></text>
-		<view class="flex flex-column ml-3" style="line-height: 1.2;">
-			<text class="font-md">{{ item.name }}</text>
-			<text class="font-sm text-muted">{{ item.create_time }}</text>
-		</view>
+	<view>
 		<view
-			class="ml-auto flex align-center justify-center"
-			style="width: 70rpx; height: 70rpx;"
-			@click.stop="select"
+			class="p-3 flex align-center border-bottom border-light-secondary"
+			hover-class="bg-light"
+			@click="$emit('click')"
 		>
-			<text
-				v-if="!item.checked"
-				style="height: 40rpx; width: 40rpx;"
-				class="rounded-circle border border-dark"
-			></text>
-			<text v-else class="iconfont icon-xuanze-yixuan text-primary" style="font-size: 40rpx;"></text>
+			<text class="iconfont" :class="iconClass" style="font-size: 60rpx;"></text>
+			<view class="flex flex-column ml-3" style="line-height: 1.2;">
+				<text class="font-md">{{ item.name }}</text>
+				<text class="font-sm text-muted">{{ item.create_time }}</text>
+			</view>
+			<view v-if="showRight" class="ml-auto">
+				<slot>
+					<view
+						class=" flex align-center justify-center"
+						style="width: 70rpx;height: 70rpx;"
+						@click.stop="select"
+					>
+						<text
+							v-if="!item.checked"
+							style="height: 25rpx;width: 25rpx;"
+							class="rounded-circle border"
+						></text>
+						<text v-else class="iconfont icon-xuanze-yixuan text-primary" style="font-size: 40rpx;"></text>
+					</view>
+				</slot>
+			</view>
+			
 		</view>
+		<slot name="bottom"></slot>
 	</view>
 </template>
-
+ 
 <script>
 const icons = {
 	dir: {
@@ -46,7 +58,11 @@ const icons = {
 export default {
 	props: {
 		item: Object,
-		index: [Number, String]
+		index: [Number, String],
+		showRight: {
+			type: Boolean,
+			default: true
+		}
 	},
 	computed: {
 		iconClass() {
@@ -64,5 +80,5 @@ export default {
 	}
 };
 </script>
-
+ 
 <style></style>
