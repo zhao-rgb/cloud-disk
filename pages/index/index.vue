@@ -14,7 +14,7 @@
 					</view>
 					<view
 						style="width: 60rpx; height: 60rpx;"
-						class="flex align-center justify-center bg-icon rounded-circle mr-3"
+						class="flex align-center justify-center bg-icon rounded-circle mr-3" @click="openSortDialog"
 					>
 						<text class="iconfont icon-gengduo"></text>
 					</view>
@@ -109,6 +109,21 @@
 				</view>
 			</view>
 		</uni-popup>
+		<!-- 排序框，底部弹出，遍历排序操作数组，为当前索引项绑定文字蓝色样式 -->
+		<uni-popup ref="sort" type="bottom">
+			<view class="bg-white">
+				<view
+					v-for="(item, index) in sortOptions"
+					:key="index"
+					class="flex align-center justify-center py-3 font border-bottom border-light-secondary"
+					:class="index === sortIndex ? 'text-main' : 'text-dark'"
+					hover-class="bg-light"
+					@click="changeSort(index)"
+				>
+					{{ item.name }}
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -130,6 +145,15 @@ export default {
 		return {
 			renameValue: '',
 			newdirname: '',
+			sortIndex: 0,
+			sortOptions: [
+				{
+					name: '按名称排序'
+				},
+				{
+					name: '按时间排序'
+				}
+			],
 			list: [
 				{
 					type: 'dir',
@@ -192,23 +216,23 @@ export default {
 	methods: {
 		// 列表点击事件处理
 		doEvent(item) {
-			switch(item.type) {
+			switch (item.type) {
 				case 'image': //预览图片
-				let images = this.list.filter(item => {
-					return item.type === 'image'
-				})
-				uni.previewImage({
-					current: item.data,
-					urls: images.map(item=>item.data)
-				})
-				   break;
+					let images = this.list.filter(item => {
+						return item.type === 'image';
+					});
+					uni.previewImage({
+						current: item.data,
+						urls: images.map(item => item.data)
+					});
+					break;
 				case 'video':
-				uni.navigateTo({
-					url: '../video/video?url='+item.data + '&title='+item.name,
-				});
-				   break;
+					uni.navigateTo({
+						url: '../video/video?url=' + item.data + '&title=' + item.name
+					});
+					break;
 				default:
-				   break;
+					break;
 			}
 		},
 		select(e) {
@@ -290,6 +314,14 @@ export default {
 				default:
 					break;
 			}
+		},
+		// 切换排序
+		changeSort(index) {
+			this.sortIndex = index;
+			this.$refs.sort.close();
+		},
+		openSortDialog(){
+			this.$refs.sort.open();
 		}
 	},
 	computed: {
