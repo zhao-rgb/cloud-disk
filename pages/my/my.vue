@@ -24,7 +24,7 @@
 		</view>
 		<view class="bg-light" style="height: 20rpx;"></view>
 		<view class="flex justify-between p-3">
-			<text class="text-muted font" @click="handleClick">设置</text>
+			<text class="text-muted font">设置</text>
 			<!-- <image src="../../static/arrow-right.png" mode="" style="width:40rpx;height: 40rpx;"></image> -->
 		</view>
 	</view>
@@ -36,11 +36,10 @@ export default {
 		return {};
 	},
 	methods: {
-		handleClick() {
-			uni.navigateTo({
-				url: '../login/login'
-			});
-		}
+
+	},
+	onLoad() {
+		console.log(this.$store.state.user);
 	}
 };
 </script>
