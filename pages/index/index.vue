@@ -14,7 +14,8 @@
 					</view>
 					<view
 						style="width: 60rpx; height: 60rpx;"
-						class="flex align-center justify-center bg-icon rounded-circle mr-3" @click="openSortDialog"
+						class="flex align-center justify-center bg-icon rounded-circle mr-3"
+						@click="openSortDialog"
 					>
 						<text class="iconfont icon-gengduo"></text>
 					</view>
@@ -155,47 +156,7 @@ export default {
 				}
 			],
 			list: [
-				{
-					type: 'dir',
-					name: '我的笔记',
-					create_time: '2020-10-21 08:00',
-					checked: false
-				},
-				{
-					type: 'image',
-					name: '撒野.jpg',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/E0867EEDD11833E76C12DAD37F603911.jpg',
-					create_time: '2020-10-21 08:00',
-					// checked: false,
-					download: 100
-				},
-				{
-					type: 'image',
-					name: '风景.jpg',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/E0867EEDD11833E76C12DAD37F603911.jpg',
-					create_time: '2020-10-21 08:00',
-					// checked: false,
-					download: 50
-				},
-				{
-					type: 'video',
-					name: 'uniapp实战教程.mp4',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/disk/%E7%90%86%E6%83%B3%E4%B8%89%E6%97%AC.mp4',
-					// create_time: '2020-10-21 08:00',
-					checked: false
-				},
-				{
-					type: 'text',
-					name: '记事本.txt',
-					create_time: '2020-10-21 08:00',
-					checked: false
-				},
-				{
-					type: 'none',
-					name: '压缩包.rar',
-					create_time: '2020-10-21 08:00',
-					checked: false
-				}
+
 			],
 			addList: [
 				{
@@ -221,8 +182,43 @@ export default {
 			]
 		};
 	},
-	onLoad() {},
+	onLoad() {
+		this.getData();
+	},
 	methods: {
+		formatList(list) {
+			return list.map(item => {
+				let type = 'none';
+				if (item.isdir === 1) {
+					type = 'dir';
+				} else {
+					type = item.ext.split('/')[0] || 'none';
+				}
+				return {
+					type,
+					checked: false,
+					...item
+				};
+			});
+		},
+		getData() {
+			this.$H
+				.get('/file?file_id=0', {
+					token: true
+				})
+				.then(res => {
+					console.log(res);
+					this.list = this.formatList(res.rows);
+				});
+		},
+		// 切换排序
+		changeSort(index) {
+			this.sortIndex = index;
+			this.$refs.sort.close();
+		},
+		openSortDialog() {
+			this.$refs.sort.open();
+		},
 		// 列表点击事件处理
 		doEvent(item) {
 			switch (item.type) {
@@ -231,13 +227,13 @@ export default {
 						return item.type === 'image';
 					});
 					uni.previewImage({
-						current: item.data,
-						urls: images.map(item => item.data)
+						current: item.url,
+						urls: images.map(item => item.url)
 					});
 					break;
 				case 'video':
 					uni.navigateTo({
-						url: '../video/video?url=' + item.data + '&title=' + item.name
+						url: '../video/video?url=' + item.url + '&title=' + item.name
 					});
 					break;
 				default:
@@ -323,14 +319,6 @@ export default {
 				default:
 					break;
 			}
-		},
-		// 切换排序
-		changeSort(index) {
-			this.sortIndex = index;
-			this.$refs.sort.close();
-		},
-		openSortDialog(){
-			this.$refs.sort.open();
 		}
 	},
 	computed: {
