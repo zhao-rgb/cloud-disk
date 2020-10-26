@@ -229,6 +229,7 @@ export default {
 			switch (item.name) {
 				case '删除':
 					this.$refs.delete.open(close => {
+						//加载框过渡下
 						uni.showLoading({
 							title: '删除中...',
 							mask: false
@@ -243,7 +244,7 @@ export default {
 								{ token: true }
 							)
 							.then(res => {
-								this.getDate();
+								this.getData();
 								uni.showToast({
 									title: '删除成功',
 									icon: 'none'
@@ -334,7 +335,7 @@ export default {
 								{ token: true }
 							)
 							.then(res => {
-								this.getDate();
+								this.getData();
 								uni.showToast({
 									title: '新建文件夹成功',
 									icon: 'none'
@@ -372,7 +373,7 @@ export default {
 						id: item.id,
 						name: item.name
 					});
-					this.getDate();
+					this.getData();
 					uni.setStorage({
 						key: 'dirs',
 						data: JSON.stringify(this.dirs)
@@ -385,7 +386,7 @@ export default {
 			// this.sortIndex = index;
 			// this.$refs.sort.close();
 			this.sortIndex = index;
-			this.getDate();
+			this.getData();
 			this.$refs.sort.close();
 		},
 		//打开sort排序框
@@ -408,7 +409,7 @@ export default {
 				};
 			});
 		},
-		getDate() {
+		getData() {
 			console.log(this.file_id + '>>>>>>>>');
 			let orderby = this.sortOptions[this.sortIndex].key;
 			console.log(orderby + '&&&&&');
@@ -423,27 +424,23 @@ export default {
 		},
 		backUp() {
 			this.dirs.pop();
-			this.getDate();
+			this.getData();
 			uni.setStorage({
 				key: 'dirs',
 				data: JSON.stringify(this.dirs)
 			});
 		},
 		search(e) {
-			console.log(e.detail.value);
 			if (e.detail.value == '') {
-				return this.getDate();
+				return this.getData();
 			}
-			console.log("开始")
 			this.$H
 				.get('/file/search?keyword=' + e.detail.value, {
 					token: true
 				})
 				.then(res => {
 					this.list = this.formatList(res.rows);
-					console.log("zhongj");
 				});
-				console.log("结束")
 		},
 		//生成唯一ID
 		getID(length) {
@@ -555,7 +552,7 @@ export default {
 		if (dirs) {
 			this.dirs = JSON.parse(dirs);
 		}
-		this.getDate();
+		this.getData();
 	}
 };
 </script>
