@@ -3188,31 +3188,21 @@ var render = function() {
                 },
                 [
                   _vm._$g("8-" + $31, "i")
-                    ? [
-                        _c(
-                          "v-uni-view",
-                          {
-                            staticClass: _vm._$g("9-" + $31, "sc"),
-                            staticStyle: { height: "60rpx" },
-                            attrs: { _i: "9-" + $31 }
-                          },
-                          [_vm._v("文件下载至：storage/xxx/xxx")]
-                        )
-                      ]
+                    ? void 0
                     : [
                         _c(
                           "v-uni-view",
                           {
-                            staticClass: _vm._$g("11-" + $31, "sc"),
-                            attrs: { _i: "11-" + $31 }
+                            staticClass: _vm._$g("10-" + $31, "sc"),
+                            attrs: { _i: "10-" + $31 }
                           },
                           [
                             _vm._v(
-                              "下载中(" + _vm._$g("11-" + $31, "t0-0") + ")"
+                              "下载中(" + _vm._$g("10-" + $31, "t0-0") + ")"
                             )
                           ]
                         ),
-                        _vm._l(_vm._$g(12 + "-" + $31, "f"), function(
+                        _vm._l(_vm._$g(11 + "-" + $31, "f"), function(
                           item,
                           index,
                           $22,
@@ -3222,40 +3212,40 @@ var render = function() {
                             "f-list",
                             {
                               key: item,
-                              attrs: { _i: "12-" + $31 + "-" + $32 }
+                              attrs: { _i: "11-" + $31 + "-" + $32 }
                             },
                             [
                               _c(
                                 "v-uni-view",
                                 {
                                   staticClass: _vm._$g(
-                                    "13-" + $31 + "-" + $32,
+                                    "12-" + $31 + "-" + $32,
                                     "sc"
                                   ),
                                   staticStyle: { height: "70rpx" },
-                                  attrs: { _i: "13-" + $31 + "-" + $32 }
+                                  attrs: { _i: "12-" + $31 + "-" + $32 }
                                 },
                                 [
                                   _c("v-uni-text", {
                                     staticClass: _vm._$g(
-                                      "14-" + $31 + "-" + $32,
+                                      "13-" + $31 + "-" + $32,
                                       "sc"
                                     ),
-                                    attrs: { _i: "14-" + $31 + "-" + $32 }
+                                    attrs: { _i: "13-" + $31 + "-" + $32 }
                                   }),
                                   _c(
                                     "v-uni-text",
                                     {
                                       staticClass: _vm._$g(
-                                        "15-" + $31 + "-" + $32,
+                                        "14-" + $31 + "-" + $32,
                                         "sc"
                                       ),
-                                      attrs: { _i: "15-" + $31 + "-" + $32 }
+                                      attrs: { _i: "14-" + $31 + "-" + $32 }
                                     },
                                     [
                                       _vm._v(
                                         _vm._$g(
-                                          "15-" + $31 + "-" + $32,
+                                          "14-" + $31 + "-" + $32,
                                           "t0-0"
                                         ) + "%"
                                       )
@@ -3268,12 +3258,12 @@ var render = function() {
                                 attrs: {
                                   slot: "bottom",
                                   percent: _vm._$g(
-                                    "16-" + $31 + "-" + $32,
+                                    "15-" + $31 + "-" + $32,
                                     "a-percent"
                                   ),
                                   activeColor: "#009CFF",
                                   "stroke-width": 4,
-                                  _i: "16-" + $31 + "-" + $32
+                                  _i: "15-" + $31 + "-" + $32
                                 },
                                 slot: "bottom"
                               })
@@ -3284,16 +3274,16 @@ var render = function() {
                         _c(
                           "v-uni-view",
                           {
-                            staticClass: _vm._$g("17-" + $31, "sc"),
-                            attrs: { _i: "17-" + $31 }
+                            staticClass: _vm._$g("16-" + $31, "sc"),
+                            attrs: { _i: "16-" + $31 }
                           },
                           [
                             _vm._v(
-                              "下载完成(" + _vm._$g("17-" + $31, "t0-0") + ")"
+                              "下载完成(" + _vm._$g("16-" + $31, "t0-0") + ")"
                             )
                           ]
                         ),
-                        _vm._l(_vm._$g(18 + "-" + $31, "f"), function(
+                        _vm._l(_vm._$g(17 + "-" + $31, "f"), function(
                           item,
                           index,
                           $23,
@@ -3301,7 +3291,7 @@ var render = function() {
                         ) {
                           return _c("f-list", {
                             key: item,
-                            attrs: { _i: "18-" + $31 + "-" + $33 }
+                            attrs: { _i: "17-" + $31 + "-" + $33 }
                           })
                         })
                       ]

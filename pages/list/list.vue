@@ -21,12 +21,37 @@
 		<swiper :duration="250" class="flex-1 flex" :current="tabIndex" @change="changeTab($event.detail.current)">
 			<swiper-item class="flex-1 flex" v-for="(item, index) in tabBars" :key="index">
 				<scroll-view scroll-y="true" class="flex-1">
-					
 					<!-- 下载列表 -->
 					<template v-if="index === 0">
-						<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
+<!-- 						<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
 							文件下载至：storage/xxx/xxx
 						</view>
+						<view class="p-2 border-bottom border-light-secondary font text-muted">
+							下载中{{ uploading.length }}
+						</view>
+						<f-list v-for="(item, index) in downing" :key="'i' + index" :item="item" :index="index">
+							<view style="height: 70rpx;" class="flex align-center text-main">
+								<text class="iconfont icon-zanting"></text>
+								<text class="ml-1">{{ item.progress }}</text>
+							</view>
+							<progress
+								slot="bottom"
+								:percent="item.progress"
+								activeColor="#009CFF"
+								:stroke-width="4"
+							></progress>
+						</f-list>
+
+						<view class="p-2 border-bottom border-light-secondary font text-muted">
+							下载完成({{ downed.length }})
+						</view>
+						<f-list
+							v-for="(item, index) in downed"
+							:key="'d' + index"
+							:item="item"
+							:index="index"
+							:showRight="false"
+						></f-list> -->
 					</template>
 
 					<!-- 上传列表 -->
@@ -104,6 +129,20 @@ export default {
 	methods: {
 		changeTab(index) {
 			this.tabIndex = index;
+		},
+		onNavigationBarButtonTap() {
+			uni.showModal({
+				content: '是否要清除传输记录？',
+				success: res => {
+					if (res.confirm) {
+						this.$store.dispatch('clearList');
+						uni.showToast({
+							title: '清除成功',
+							icon: 'none'
+						});
+					}
+				}
+			});
 		}
 	}
 };
