@@ -120,5 +120,49 @@ export default new Vuex.Store({
 				})
 			}
 		},
+		clearList({
+			state
+		}) {
+			if (state.user) {
+				uni.removeStorageSync('downlist_' + state.user.id)
+				uni.removeStorageSync('uploadList' + state.user.id)
+
+				state.uploadList = []
+				state.downlist = []
+			}
+
+		},
+		getShareUrl({
+			state
+		}) {
+			// #ifndef H5
+			uni.getClipboardData({
+				success: (res) => {
+					//通过前端结果可以看到剪贴的链接是以http://127.0.0.0:7001/开头的
+					if (res.data.includes('http://127.0.0.1:7001/')) {
+						//需要从完整的链接取出key的值
+						let key = res.data.substring(res.data.lastIndexOf('\/') + 1, res.data.length)
+						if (!key) {
+							return
+						}
+						uni.showModal({
+							content: '检测到有分享内容，是否打开',
+							success: (res) => {
+								if (res.confirm) {
+									uni.navigateTo({
+										url: '/pages/shareurl/shareurl?key=' + key
+									})
+									//清空剪切板
+									uni.setClipboardData({
+										data: ''
+									})
+								}
+							}
+						})
+					}
+				}
+			});
+			// #endif
+		}
 	}
 })
