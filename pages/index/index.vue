@@ -42,7 +42,26 @@
 		</nav-bar>
 		<view style="height: 1000px;">
 			<!-- 搜索框，设置圆角 -->
-			<uni-search-bar :radius="100"></uni-search-bar>
+			<!-- <uni-search-bar :radius="100" ></uni-search-bar> -->
+			
+			<!-- 搜索框 -->
+			<view class="px-3 py-2">
+				<view class="position-relative">
+					<view
+						style="height: 70rpx;width: 70rpx;position: absolute;top: 0;left: 0;"
+						class="flex align-center justify-center text-light-muted"
+					>
+						<text class="iconfont icon-sousuo"></text>
+					</view>
+					<input
+						style="height: 70rpx;padding-left: 70rpx;"
+						type="text"
+						class="bg-light font-md rounded-circle"
+						placeholder="搜索网盘文件"
+						@input="search"
+					/>
+				</view>
+			</view>
 			<!-- 列表 -->
 			<f-list
 				v-for="(item, index) in list"
@@ -77,7 +96,7 @@
 		</view>
 
 		<!-- 是否要删除 -->
-		<f-dialog ref="dialog">是否删除选中的文件？</f-dialog>
+		<f-dialog ref="delete">是否删除选中的文件？</f-dialog>
 
 		<!-- 重命名，通过ref定义不同的对话框对象，不同操作弹出的dialog是不同的对象 -->
 		<f-dialog ref="rename">
@@ -195,85 +214,8 @@ export default {
 			]
 		};
 	},
-	onLoad() {
-		let dirs = uni.getStorageSync('dirs');
-		if (dirs) {
-			this.dirs = JSON.parse(dirs);
-		}
-		this.getData();
-	},
 	methods: {
-		//将数据格式化为我们需要的显示的样子，不同的文件类型，是否选中
-		formatList(list) {
-			return list.map(item => {
-				let type = 'none';
-				if (item.isdir === 1) {
-					type = 'dir';
-				} else {
-					type = item.ext.split('/')[0] || 'none';
-				}
-				return {
-					type,
-					checked: false,
-					...item
-				};
-			});
-		},
-		getData() {
-			console.log(this.file_id + '>>>>>>>>>>>>');
-			let orderby = this.sortOptions[this.sortIndex].key;
-			console.log(orderby + '&&&&&&&&');
-			this.$H
-				.get(`/file?file_id=${this.file_id}&orderby=${orderby}`, {
-					token: true
-				})
-				.then(res => {
-					this.list = this.formatList(res.rows);
-				});
-		},
-		// 切换排序
-		changeSort(index) {
-			// this.sortIndex = index;
-			// this.$refs.sort.close();
-			this.sortIndex = index;
-			this.getData();
-			this.$refs.sort.close();
-		},
-		openSortDialog() {
-			this.$refs.sort.open();
-		},
-		// 列表点击事件处理
-		doEvent(item) {
-			switch (item.type) {
-				case 'image': //预览图片
-					let images = this.list.filter(item => {
-						return item.type === 'image';
-					});
-					uni.previewImage({
-						current: item.url,
-						urls: images.map(item => item.url)
-					});
-					break;
-				case 'video':
-					uni.navigateTo({
-						url: '../video/video?url=' + item.url + '&title=' + item.name
-					});
-					break;
-				default:
-					this.dirs.push({
-						id: item.id,
-						name: item.name
-					});
-					this.getData();
-					uni.setStorage({
-						key: 'dirs',
-						data: JSON.stringify(this.dirs)
-					});
-					break;
-			}
-		},
 		select(e) {
-			//接收到子组件传递过来的索引选中状态，将对应的list中的数据更新
 			this.list[e.index].checked = e.value;
 		},
 		//全选/取消全选
@@ -282,29 +224,15 @@ export default {
 				item.checked = checked;
 			});
 		},
-		//处理底部操作条事件，这里仅对"删除"做了处理
+		//处理底部操作时间
 		handleBottomEvent(item) {
 			switch (item.name) {
 				case '删除':
-					// this.$refs.dialog.open(close => {
-					// 	//对list进行过滤，留下未被选中的
-					// 	this.list = this.list.filter(item => !item.checked);
-					// 	close();
-					// 	uni.showToast({
-					// 		title: '删除成功',
-					// 		icon: 'none'
-					// 	});
-					// 	// // 在这儿可以写点击删除需要做的回调事件，这里先在控制台模拟，实际需要把checkList移除掉
-					// 	// console.log('删除文件');
-					// 	// console.log(this.checkList);
-					// });
 					this.$refs.delete.open(close => {
-						// 加载框过滤下
 						uni.showLoading({
-							title: '删除中',
+							title: '删除中...',
 							mask: false
 						});
-						// 删除接口入参需要“1，2，3”这样的形式,所以用map取出checkList中每条数据的id，然后用join拼接上逗号
 						let ids = this.checkList.map(item => item.id).join(',');
 						this.$H
 							.post(
@@ -315,23 +243,27 @@ export default {
 								{ token: true }
 							)
 							.then(res => {
-								//重新请求下数据
-								this.getData();
+								this.getDate();
 								uni.showToast({
 									title: '删除成功',
 									icon: 'none'
 								});
-								// 结束Loading
 								uni.hideLoading();
 							})
 							.catch(err => {
 								uni.hideLoading();
 							});
+						//对List进行过滤，留下未被选中的
+						//this.list = this.list.filter(item => !item.checked);
 						close();
+						uni.showToast({
+							title: '删除成功',
+							icon: 'none'
+						});
 					});
 					break;
 				case '重命名':
-					//重命名只能对单个文件进行，所以取this.checkList[0],也就是选中的唯一元素
+					//只能对单个文件进行，所以取this.checkList[0],也就是选中的唯一元素
 					this.renameValue = this.checkList[0].name;
 					this.$refs.rename.open(close => {
 						if (this.renameValue == '') {
@@ -340,11 +272,7 @@ export default {
 								icon: 'none'
 							});
 						}
-						// //更新钙元素的name值，实时看到效果
-						// this.checkList[0].name = this.renameValue;
-						
-						console.log(this.checkList[0].id + '>>>>>>>' + this.file_id);
-						//重命名接口需要三个参数，自身id，新名称
+						console.log(this.checkList[0].id + '>>>>>>>>' + this.file_id);
 						this.$H
 							.post(
 								'/file/rename',
@@ -373,10 +301,19 @@ export default {
 		openAddDialog() {
 			this.$refs.add.open();
 		},
-		//处理添加操作条的各种事件
 		handleAddEvent(item) {
 			this.$refs.add.close();
 			switch (item.name) {
+				case '上传图片':
+					uni.chooseImage({
+						count: 9,
+						success: res => {
+							res.tempFiles.forEach(item => {
+								this.upload(item, 'image');
+							});
+						}
+					});
+					break;
 				case '新建文件夹':
 					this.$refs.newdir.open(close => {
 						if (this.newdirname == '') {
@@ -385,19 +322,7 @@ export default {
 								icon: 'none'
 							});
 						}
-						// //模拟请求服务器，这里先增加到list数组中
-						// this.list.push({
-						// 	type: 'dir',
-						// 	name: this.newdirname,
-						// 	create_time: '2020-10-22 17:00',
-						// 	checked: false
-						// });
-						// uni.showToast({
-						// 	title: '新建文件夹成功',
-						// 	icon: 'none'
-						// });
-						// close();
-						// 请求新增文件夹接口
+						//模拟请求服务器，这里先增加到List数组中
 						this.$H
 							.post(
 								'/file/createdir',
@@ -408,28 +333,154 @@ export default {
 								{ token: true }
 							)
 							.then(res => {
-								this.getData();
+								this.getDate();
 								uni.showToast({
 									title: '新建文件夹成功',
 									icon: 'none'
 								});
 							});
+
 						close();
 						this.newdirname = '';
 					});
 					break;
+
 				default:
 					break;
 			}
 		},
-		// 返回上一个目录
+		doEvent(item) {
+			switch (item.type) {
+				case 'image':
+					let images = this.list.filter(item => {
+						return item.type === 'image';
+					});
+					uni.previewImage({
+						current: item.url,
+						urls: images.map(item => item.url)
+					});
+					break;
+
+				case 'video':
+					uni.navigateTo({
+						url: '../video/video?url=' + item.url + '&title=' + item.name
+					});
+					break;
+				default:
+					this.dirs.push({
+						id: item.id,
+						name: item.name
+					});
+					this.getDate();
+					uni.setStorage({
+						key: 'dirs',
+						data: JSON.stringify(this.dirs)
+					});
+					break;
+			}
+		},
+		//根据排序类型的索引切换不同的排序，关闭sort排序框
+		changeSort(index) {
+			// this.sortIndex = index;
+			// this.$refs.sort.close();
+			this.sortIndex = index;
+			this.getDate();
+			this.$refs.sort.close();
+		},
+		//打开sort排序框
+		openSortDialog() {
+			this.$refs.sort.open();
+		},
+		//将数据格式化为需要显示的样子
+		formatList(list) {
+			return list.map(item => {
+				let type = 'none';
+				if (item.isdir === 1) {
+					type = 'dir';
+				} else {
+					type = item.ext.split('/')[0] || 'none';
+				}
+				return {
+					type,
+					checked: false,
+					...item
+				};
+			});
+		},
+		getDate() {
+			console.log(this.file_id + '>>>>>>>>');
+			let orderby = this.sortOptions[this.sortIndex].key;
+			console.log(orderby + '&&&&&');
+			this.$H
+				.get(`/file?file_id=${this.file_id}&orderby=${orderby}`, {
+					token: true
+				})
+				.then(res => {
+					console.log(res);
+					this.list = this.formatList(res.rows);
+				});
+		},
 		backUp() {
 			this.dirs.pop();
-			this.getData();
+			this.getDate();
 			uni.setStorage({
 				key: 'dirs',
 				data: JSON.stringify(this.dirs)
 			});
+		},
+		search(e) {
+			if (e.detail.value == '') {
+				return this.getDate();
+			}
+			this.$H
+				.get('/file/search?keyword=' + e.detail.value, {
+					token: true
+				})
+				.then(res => {
+					this.list = this.formatList(res.rows);
+				});
+		},
+		//生成唯一ID
+		getID(length) {
+			return Number(
+				Math.random()
+					.toString()
+					.substr(3, length) + Date.now()
+			).toString(36);
+		},
+		upload(file, type) {
+			let t = type;
+			const key = this.getID(8);
+			let obj = {
+				name: file.name,
+				type: t,
+				size: file.size,
+				key,
+				progress: 0,
+				status: true,
+				create_time: new Date().getTime()
+			};
+			this.$store.dispatch('createUploadJob', obj);
+			this.$H
+				.upload(
+					'/upload?file_id=' + this.file_id,
+					{
+						filePath: file.path
+					},
+					p => {
+						this.$store.dispatch('updateUploadJob', {
+							status: true,
+							progress: p,
+							key
+						});
+					}
+				)
+				.then(res => {
+					console.log('1111111111111');
+					console.log(res);
+					this.getData();
+				});
+			this.getData();
 		}
 	},
 	computed: {
@@ -455,7 +506,7 @@ export default {
 		checkCount() {
 			return this.checkList.length;
 		},
-		// 操作菜单
+		//操作菜单
 		actions() {
 			if (this.checkCount > 1) {
 				return [
@@ -488,6 +539,13 @@ export default {
 				}
 			];
 		}
+	},
+	onLoad() {
+		let dirs = uni.getStorageSync('dirs');
+		if (dirs) {
+			this.dirs = JSON.parse(dirs);
+		}
+		this.getDate();
 	}
 };
 </script>
