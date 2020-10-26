@@ -43,7 +43,7 @@
 		<view style="height: 1000px;">
 			<!-- 搜索框，设置圆角 -->
 			<!-- <uni-search-bar :radius="100" ></uni-search-bar> -->
-			
+
 			<!-- 搜索框 -->
 			<view class="px-3 py-2">
 				<view class="position-relative">
@@ -308,6 +308,7 @@ export default {
 					uni.chooseImage({
 						count: 9,
 						success: res => {
+							// 选择图片成功，就循环异步调用上传接口
 							res.tempFiles.forEach(item => {
 								this.upload(item, 'image');
 							});
@@ -429,16 +430,20 @@ export default {
 			});
 		},
 		search(e) {
+			console.log(e.detail.value);
 			if (e.detail.value == '') {
 				return this.getDate();
 			}
+			console.log("开始")
 			this.$H
 				.get('/file/search?keyword=' + e.detail.value, {
 					token: true
 				})
 				.then(res => {
 					this.list = this.formatList(res.rows);
+					console.log("zhongj");
 				});
+				console.log("结束")
 		},
 		//生成唯一ID
 		getID(length) {
@@ -448,9 +453,13 @@ export default {
 					.substr(3, length) + Date.now()
 			).toString(36);
 		},
+		//上传
 		upload(file, type) {
+			//上传文件的类型
 			let t = type;
+			//上传的key，用来区分每个文件
 			const key = this.getID(8);
+			//构建上传文件的对象
 			let obj = {
 				name: file.name,
 				type: t,
@@ -460,7 +469,9 @@ export default {
 				status: true,
 				create_time: new Date().getTime()
 			};
+			//创建上传任务，分发给Vuex的Actions，异步上传调度。主要是实现上传的进度的回调
 			this.$store.dispatch('createUploadJob', obj);
+			//上传、查询参数为当前位置所在目录的id，body参数为文件路径
 			this.$H
 				.upload(
 					'/upload?file_id=' + this.file_id,
@@ -468,6 +479,7 @@ export default {
 						filePath: file.path
 					},
 					p => {
+						//更新上传任务进度
 						this.$store.dispatch('updateUploadJob', {
 							status: true,
 							progress: p,
@@ -476,11 +488,9 @@ export default {
 					}
 				)
 				.then(res => {
-					console.log('1111111111111');
 					console.log(res);
 					this.getData();
 				});
-			this.getData();
 		}
 	},
 	computed: {
