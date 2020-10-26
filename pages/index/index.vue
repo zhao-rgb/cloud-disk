@@ -3,7 +3,19 @@
 		<!-- 自定义导航栏 -->
 		<nav-bar>
 			<template v-if="checkCount == 0">
-				<text slot="left" class="font-md ml-3">首页</text>
+				<!-- 插槽再一次发挥逆天作用，进入子目录，左边将变成返回箭头，导航栏变成子目录名称 -->
+				<template slot="left">
+					<view
+						style="width: 60rpx;height: 60rpx;"
+						class="flex align-center justify-center bg-light rounded-circle ml-3"
+						hover-class="bg-hover-light"
+						@tap="backUp"
+						v-if="current"
+					>
+						<text class="iconfont icon-fanhui"></text>
+					</view>
+					<text class="font-md ml-3">{{ current ? current.name : '首页' }}</text>
+				</template>
 				<template slot="right">
 					<view
 						style="width: 60rpx; height: 60rpx;"
@@ -146,18 +158,19 @@ export default {
 		return {
 			renameValue: '',
 			newdirname: '',
+			dirs: [],
 			sortIndex: 0,
 			sortOptions: [
 				{
-					name: '按名称排序'
+					name: '按名称排序',
+					key: 'name'
 				},
 				{
-					name: '按时间排序'
+					name: '按时间排序',
+					key: 'created_time'
 				}
 			],
-			list: [
-
-			],
+			list: [],
 			addList: [
 				{
 					icon: 'icon-file-b-6',
@@ -183,9 +196,14 @@ export default {
 		};
 	},
 	onLoad() {
+		let dirs = uni.getStorageSync('dirs');
+		if (dirs) {
+			this.dirs = JSON.parse(dirs);
+		}
 		this.getData();
 	},
 	methods: {
+		//将数据格式化为我们需要的显示的样子，不同的文件类型，是否选中
 		formatList(list) {
 			return list.map(item => {
 				let type = 'none';
@@ -202,18 +220,23 @@ export default {
 			});
 		},
 		getData() {
+			console.log(this.file_id + '>>>>>>>>>>>>');
+			let orderby = this.sortOptions[this.sortIndex].key;
+			console.log(orderby + '&&&&&&&&');
 			this.$H
-				.get('/file?file_id=0', {
+				.get(`/file?file_id=${this.file_id}&orderby=${orderby}`, {
 					token: true
 				})
 				.then(res => {
-					console.log(res);
 					this.list = this.formatList(res.rows);
 				});
 		},
 		// 切换排序
 		changeSort(index) {
+			// this.sortIndex = index;
+			// this.$refs.sort.close();
 			this.sortIndex = index;
+			this.getData();
 			this.$refs.sort.close();
 		},
 		openSortDialog() {
@@ -237,6 +260,15 @@ export default {
 					});
 					break;
 				default:
+					this.dirs.push({
+						id: item.id,
+						name: item.name
+					});
+					this.getData();
+					uni.setStorage({
+						key: 'dirs',
+						data: JSON.stringify(this.dirs)
+					});
 					break;
 			}
 		},
@@ -319,9 +351,32 @@ export default {
 				default:
 					break;
 			}
+		},
+		// 返回上一个目录
+		backUp() {
+			this.dirs.pop();
+			this.getData();
+			uni.setStorage({
+				key: 'dirs',
+				data: JSON.stringify(this.dirs)
+			});
 		}
 	},
 	computed: {
+		file_id() {
+			let l = this.dirs.length;
+			if (l === 0) {
+				return 0;
+			}
+			return this.dirs[l - 1].id;
+		},
+		current() {
+			let l = this.dirs.length;
+			if (l === 0) {
+				return false;
+			}
+			return this.dirs[l - 1];
+		},
 		//选中列表
 		checkList() {
 			return this.list.filter(item => item.checked);
