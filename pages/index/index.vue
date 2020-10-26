@@ -294,6 +294,9 @@ export default {
 						close();
 					});
 					break;
+				case '下载':
+					this.download();
+					break;
 				default:
 					break;
 			}
@@ -488,6 +491,54 @@ export default {
 					console.log(res);
 					this.getData();
 				});
+		},
+		download() {
+			this.checkList.forEach(item => {
+				if (item.isdir === 0) {
+					const key = this.getID(8);
+
+					let obj = {
+						name: item.name,
+						type: item.type,
+						size: item.size,
+						key,
+						progress: 0,
+						status: true,
+						created_time: new Date().getTime()
+					};
+
+					//创建下载任务
+					this.$store.dispatch('createDownloadJob', obj);
+
+					let url = item.url;
+
+					let d = uni.downloadFile({
+						url,
+						success: res => {
+							if (res.statusCode === 200) {
+								console.log('下载成功', res);
+								uni.saveFile({
+									tempFilePath: item.tempFilePath
+								});
+							}
+						}
+					});
+
+					d.onProgressUpdate(res => {
+						this.$store.dispatch('updateDownloadJob', {
+							progress: res.progress,
+							status: true,
+							key
+						});
+					});
+				}
+			});
+
+			uni.showToast({
+				title: '已加入下载列表',
+				icon: 'none'
+			});
+			this.handleCheckAll(false);
 		}
 	},
 	computed: {
