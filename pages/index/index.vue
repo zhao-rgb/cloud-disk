@@ -286,17 +286,48 @@ export default {
 		handleBottomEvent(item) {
 			switch (item.name) {
 				case '删除':
-					this.$refs.dialog.open(close => {
-						//对list进行过滤，留下未被选中的
-						this.list = this.list.filter(item => !item.checked);
-						close();
-						uni.showToast({
-							title: '删除成功',
-							icon: 'none'
+					// this.$refs.dialog.open(close => {
+					// 	//对list进行过滤，留下未被选中的
+					// 	this.list = this.list.filter(item => !item.checked);
+					// 	close();
+					// 	uni.showToast({
+					// 		title: '删除成功',
+					// 		icon: 'none'
+					// 	});
+					// 	// // 在这儿可以写点击删除需要做的回调事件，这里先在控制台模拟，实际需要把checkList移除掉
+					// 	// console.log('删除文件');
+					// 	// console.log(this.checkList);
+					// });
+					this.$refs.delete.open(close => {
+						// 加载框过滤下
+						uni.showLoading({
+							title: '删除中',
+							mask: false
 						});
-						// // 在这儿可以写点击删除需要做的回调事件，这里先在控制台模拟，实际需要把checkList移除掉
-						// console.log('删除文件');
-						// console.log(this.checkList);
+						// 删除接口入参需要“1，2，3”这样的形式,所以用map取出checkList中每条数据的id，然后用join拼接上逗号
+						let ids = this.checkList.map(item => item.id).join(',');
+						this.$H
+							.post(
+								'/file/delete',
+								{
+									ids
+								},
+								{ token: true }
+							)
+							.then(res => {
+								//重新请求下数据
+								this.getData();
+								uni.showToast({
+									title: '删除成功',
+									icon: 'none'
+								});
+								// 结束Loading
+								uni.hideLoading();
+							})
+							.catch(err => {
+								uni.hideLoading();
+							});
+						close();
 					});
 					break;
 				case '重命名':
