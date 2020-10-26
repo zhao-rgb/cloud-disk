@@ -297,6 +297,10 @@ export default {
 				case '下载':
 					this.download();
 					break;
+				case '分享':
+					this.share();
+					this.handleCheckAll(false);
+					break;
 				default:
 					break;
 			}
@@ -508,7 +512,7 @@ export default {
 					};
 
 					//创建下载任务
-					this.$store.dispatch('createDownloadJob', obj);
+					this.$store.dispatch('createDownLoadJob', obj);
 
 					let url = item.url;
 
@@ -525,7 +529,7 @@ export default {
 					});
 
 					d.onProgressUpdate(res => {
-						this.$store.dispatch('updateDownloadJob', {
+						this.$store.dispatch('updateDownLoadJob', {
 							progress: res.progress,
 							status: true,
 							key
@@ -539,6 +543,37 @@ export default {
 				icon: 'none'
 			});
 			this.handleCheckAll(false);
+		},
+		share() {
+			this.$H
+				.post(
+					'/share/create',
+					{
+						file_id: this.checkList[0].id
+					},
+					{ token: true }
+				)
+				.then(res => {
+					uni.showModal({
+						content: res,
+						showCancel: false,
+						success: result => {
+							//不能再用res,会和前面冲突
+							// #ifndef H5
+							uni.setClipboardData({
+								//复制到剪切板
+								data: res,
+								success: () => {
+									uni.showToast({
+										title: '复制成功',
+										icon: 'none'
+									});
+								}
+							});
+							// #endif
+						}
+					});
+				});
 		}
 	},
 	computed: {

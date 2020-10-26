@@ -91,7 +91,7 @@ export default new Vuex.Store({
 			}
 		},
 		//创建一个下载任务
-		createDownloadJob({
+		createDownLoadJob({
 			state
 		}, obj) {
 			//添加到上传队列的最前面
@@ -103,20 +103,20 @@ export default new Vuex.Store({
 			})
 		},
 		//更新上传任务进度
-		updateUploadJob({
+		updateDownLoadJob({
 			state
 		}, obj) {
 			//在上传队列中查找该用户的上传任务
-			let i = state.uploadList.findIndex(item => item.key === obj.key)
+			let i = state.downlist.findIndex(item => item.key === obj.key)
 			//如果存在
 			if (i !== -1) {
 				//更新proress属性和上传状态值
-				state.uploadList[i].progress = obj.progress
-				state.uploadList[i].status = obj.status
+				state.downlist[i].progress = obj.progress
+				state.downlist[i].status = obj.status
 				//异步更新本地存储
 				uni.setStorage({
-					key: 'uploadList_' + state.user.id,
-					data: JSON.stringify(state.uploadList)
+					key: 'downlist_' + state.user.id,
+					data: JSON.stringify(state.downlist)
 				})
 			}
 		},
